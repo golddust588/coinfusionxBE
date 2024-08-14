@@ -12,7 +12,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/admin", adminRoute);
-app.use("/audits", auditRoute);
+app.use("/order", auditRoute);
 
 mongoose
   .connect(process.env.DB_CONNECTION)

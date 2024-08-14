@@ -18,21 +18,55 @@ const INSERT_ORDER = async (req, res) => {
     // Format the date and time as "yyyy-mm-dd HH:MM"
     const formattedDateTime = `${year}-${month}-${day} ${hours}:${minutes}`;
 
-    const audit = new OrderModel({
+    const generateSevenDigitNumber = () => {
+      // Generate a random number between 1000000 and 9999999
+      return `#${Math.floor(Math.random() * 9000000) + 1000000}`;
+    };
+
+    const order = new OrderModel({
       date: formattedDateTime,
-      auditObjNumber: req.body.auditObjNumber,
-      auditName: req.body.auditName,
-      user_id: req.body.userId,
+      trackingNumber: generateSevenDigitNumber(),
+      currency: req.body.currency,
+      sentAmount: req.body.sentAmount,
+      amountToBeReceived: req.body.amountToBeReceived,
+      receivingWalletAddress: req.body.receivingWalletAddress,
     });
 
-    const response = await audit.save();
+    const response = await order.save();
 
-    return res.status(201).json({ response: response });
+    return res.status(201).json({ response: response, status: 201 });
   } catch (err) {
     console.log(err);
-    return res.status(500).json({ status: "Something went wrong" });
+    return res
+      .status(500)
+      .json({ message: "Something went wrong", status: 500 });
   }
 };
+
+const FIND_ORDER_BY_TRACKING_NUMBER = async (req, res) => {
+  try {
+    // Extract the tracking number from the request params or query
+    const { trackingNumber } = req.params;
+
+    // Find the order by tracking number
+    const order = await OrderModel.findOne({ trackingNumber: trackingNumber });
+
+    // Check if the order exists
+    if (!order) {
+      return res.status(404).json({ message: "Order not found", status: 404 });
+    }
+
+    // Return the found order
+    return res.status(200).json({ order: order, status: 200 });
+  } catch (err) {
+    console.error(err);
+    return res
+      .status(500)
+      .json({ message: "Something went wrong", status: 500 });
+  }
+};
+
+export default FIND_ORDER_BY_TRACKING_NUMBER;
 
 // Dex tools data fetch ------------------------------------------------------------------------
 
@@ -65,4 +99,4 @@ const GET_TOKEN_PRICE = async (req, res) => {
   }
 };
 
-export { INSERT_ORDER, GET_TOKEN_PRICE };
+export { INSERT_ORDER, FIND_ORDER_BY_TRACKING_NUMBER, GET_TOKEN_PRICE };
