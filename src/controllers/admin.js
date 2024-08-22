@@ -3,19 +3,19 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 const LOGIN = async (req, res) => {
-  const user = await AdminModel.findOne({ email: req.body.email });
+  const admin = await AdminModel.findOne({ name: req.body.name });
 
-  if (!user) {
+  if (!admin) {
     return res.status(401).json({ message: "Bad authentication" });
   }
 
-  bcrypt.compare(req.body.password, user.password, (err, isPasswordMatch) => {
+  bcrypt.compare(req.body.password, admin.password, (err, isPasswordMatch) => {
     if (!isPasswordMatch || err) {
       return res.status(401).json({ message: "Bad authentication" });
     }
 
     const jwt_token = jwt.sign(
-      { email: user.email, userId: user._id },
+      { name: admin.name, adminId: admin._id },
       process.env.JWT_SECRET,
       { expiresIn: "24h" },
       { algorithm: "RS256" }
@@ -23,27 +23,23 @@ const LOGIN = async (req, res) => {
 
     return res.status(200).json({
       message: "Login successful",
-      name: user.name,
-      user_id: user._id,
       jwt_token: jwt_token,
+      status: 200,
     });
   });
 };
 
 const CHANGE_PASSWORD = async (req, res) => {
   try {
-    const { currentPassword, newPassword } = req.body;
+    const { password, newPassword } = req.body;
 
     // Retrieve user from the database
-    const user = await AdminModel.findById({ _id: req.body.userId });
+    const admin = await AdminModel.findOne({ name: req.body.name });
 
     // If user exists, check if the current password matches
-    if (user) {
+    if (admin) {
       // Compare current password with hashed password stored in the database
-      const isPasswordMatch = await bcrypt.compare(
-        currentPassword,
-        user.password
-      );
+      const isPasswordMatch = await bcrypt.compare(password, admin.password);
 
       // If current password matches, hash the new password and update
       if (isPasswordMatch) {
@@ -52,23 +48,23 @@ const CHANGE_PASSWORD = async (req, res) => {
         const hash = bcrypt.hashSync(newPassword, salt);
 
         // Update user's password with the hashed password
-        user.password = hash;
+        admin.password = hash;
 
-        // Save the updated user object
-        await user.save();
+        await admin.save();
 
         // New JWT
 
         const jwt_token = jwt.sign(
-          { email: user.email, userId: user._id },
+          { name: admin.name, adminId: admin._id },
           process.env.JWT_SECRET,
-          { expiresIn: "12h" },
+          { expiresIn: "24h" },
           { algorithm: "RS256" }
         );
 
         return res.status(201).json({
           message: "Password updated successfully",
           jwt_token: jwt_token,
+          status: 201,
         });
       } else {
         return res
@@ -76,7 +72,7 @@ const CHANGE_PASSWORD = async (req, res) => {
           .json({ message: "Current password is incorrect" });
       }
     } else {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: "Admin not found" });
     }
   } catch (err) {
     console.error(err);

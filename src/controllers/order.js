@@ -20,7 +20,7 @@ const INSERT_ORDER = async (req, res) => {
 
     const generateSevenDigitNumber = () => {
       // Generate a random number between 1000000 and 9999999
-      return `#${Math.floor(Math.random() * 9000000) + 1000000}`;
+      return Math.floor(Math.random() * 9000000) + 1000000;
     };
 
     const order = new OrderModel({
@@ -46,7 +46,7 @@ const INSERT_ORDER = async (req, res) => {
 const FIND_ORDER_BY_TRACKING_NUMBER = async (req, res) => {
   try {
     // Extract the tracking number from the request params or query
-    const { trackingNumber } = req.params;
+    const trackingNumber = req.params.id;
 
     // Find the order by tracking number
     const order = await OrderModel.findOne({ trackingNumber: trackingNumber });
@@ -65,8 +65,6 @@ const FIND_ORDER_BY_TRACKING_NUMBER = async (req, res) => {
       .json({ message: "Something went wrong", status: 500 });
   }
 };
-
-export default FIND_ORDER_BY_TRACKING_NUMBER;
 
 // Dex tools data fetch ------------------------------------------------------------------------
 

@@ -7,8 +7,8 @@ const orderSchema = mongoose.Schema({
   sentAmount: { type: Number, required: true },
   amountToBeReceived: { type: Number, required: true },
   receivingWalletAddress: { type: String, required: true },
-  approved: { type: String, default: false, required: true },
-  delivered: { type: String, default: false, required: true },
+  approved: { type: Boolean, default: false, required: true },
+  delivered: { type: Boolean, default: false, required: true },
 });
 
 export default mongoose.model("Order", orderSchema);
