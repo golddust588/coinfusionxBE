@@ -1,6 +1,6 @@
 import AdminModel from "../models/admin.js";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+// import jwt from "jsonwebtoken";
 
 const LOGIN = async (req, res) => {
   const admin = await AdminModel.findOne({ name: req.body.name });
@@ -14,16 +14,16 @@ const LOGIN = async (req, res) => {
       return res.status(401).json({ message: "Bad authentication" });
     }
 
-    const jwt_token = jwt.sign(
-      { name: admin.name, adminId: admin._id },
-      process.env.JWT_SECRET,
-      { expiresIn: "24h" },
-      { algorithm: "RS256" }
-    );
+    // const jwt_token = jwt.sign(
+    //   { name: admin.name, adminId: admin._id },
+    //   process.env.JWT_SECRET,
+    //   { expiresIn: "24h" },
+    //   { algorithm: "RS256" }
+    // );
 
     return res.status(200).json({
       message: "Login successful",
-      jwt_token: jwt_token,
+      // jwt_token: jwt_token,
       status: 200,
     });
   });
@@ -54,16 +54,16 @@ const CHANGE_PASSWORD = async (req, res) => {
 
         // New JWT
 
-        const jwt_token = jwt.sign(
-          { name: admin.name, adminId: admin._id },
-          process.env.JWT_SECRET,
-          { expiresIn: "24h" },
-          { algorithm: "RS256" }
-        );
+        // const jwt_token = jwt.sign(
+        //   { name: admin.name, adminId: admin._id },
+        //   process.env.JWT_SECRET,
+        //   { expiresIn: "24h" },
+        //   { algorithm: "RS256" }
+        // );
 
         return res.status(201).json({
           message: "Password updated successfully",
-          jwt_token: jwt_token,
+          // jwt_token: jwt_token,
           status: 201,
         });
       } else {
