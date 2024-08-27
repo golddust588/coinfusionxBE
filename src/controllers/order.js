@@ -56,7 +56,6 @@ const FIND_ORDER_BY_TRACKING_NUMBER = async (req, res) => {
       return res.status(404).json({ message: "Order not found", status: 404 });
     }
 
-    // Return the found order
     return res.status(200).json({ order: order, status: 200 });
   } catch (err) {
     console.error(err);
@@ -66,34 +65,30 @@ const FIND_ORDER_BY_TRACKING_NUMBER = async (req, res) => {
   }
 };
 
-// Dex tools data fetch ------------------------------------------------------------------------
+// Etherscan data fetch ------------------------------------------------------------------------
 
 const GET_TOKEN_PRICE = async (req, res) => {
   try {
-    const chainId = "ether";
-    const address = req.params.id;
-
-    // Set up request headers with API key
-    const headers = {
-      "x-api-key": process.env.DEX_TOOLS_API_KEY,
-      accept: "application/json",
+    // Etherscan API parameters
+    const params = {
+      module: "stats",
+      action: "ethprice",
+      apikey: process.env.ETHERSCAN_API_KEY,
     };
 
-    const response = await axios.get(
-      `${process.env.DEX_TOOLS_API_BASE_URL}token/${chainId}/${address}/price`,
-      {
-        headers: headers,
-      }
-    );
+    const response = await axios.get(process.env.ETHERSCAN_API_BASE_URL, {
+      params,
+    });
 
-    // Extract token score from response
-    const tokenPrice = response.data;
-    res.status(200).json({ success: true, tokenPrice });
+    const ethPriceUSD = response.data.result.ethusd;
+    const ethPriceBTC = response.data.result.ethbtc;
+
+    res.status(200).json({ success: true, ethPriceUSD, ethPriceBTC });
   } catch (error) {
-    console.error("Error fetching token score:", error.message);
+    console.error("Error fetching Ethereum price:", error.message);
     res
       .status(500)
-      .json({ success: false, error: "Error fetching token score" });
+      .json({ success: false, error: "Error fetching Ethereum price" });
   }
 };
 

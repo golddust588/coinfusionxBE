@@ -11,6 +11,6 @@ const router = express.Router();
 router.post("/", INSERT_ORDER);
 router.get("/:id", FIND_ORDER_BY_TRACKING_NUMBER);
 //Dex tools
-router.get("/token-price/:id", GET_TOKEN_PRICE);
+router.get("/token-price/eth", GET_TOKEN_PRICE);
 
 export default router;
