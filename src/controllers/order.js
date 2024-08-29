@@ -65,6 +65,54 @@ const FIND_ORDER_BY_TRACKING_NUMBER = async (req, res) => {
   }
 };
 
+const UPDATE_ORDER_BY_ID = async (req, res) => {
+  try {
+    // Extract the order ID from the request params
+    const { id } = req.params;
+
+    // Extract the update fields from the request body
+    const updateFields = req.body;
+
+    // Find and update the order by its ID
+    const updatedOrder = await OrderModel.findByIdAndUpdate(
+      id,
+      updateFields,
+      { new: true, runValidators: true } // Options: return the updated document, and run schema validations
+    );
+
+    // Check if the order was found and updated
+    if (!updatedOrder) {
+      return res.status(404).json({ message: "Order not found", status: 404 });
+    }
+
+    return res.status(200).json({ order: updatedOrder, status: 200 });
+  } catch (err) {
+    console.error(err);
+    return res
+      .status(500)
+      .json({ message: "Something went wrong", status: 500 });
+  }
+};
+
+const GET_ALL_ORDERS = async (req, res) => {
+  try {
+    // Retrieve all orders from the database
+    const orders = await OrderModel.find();
+
+    // Check if there are any orders
+    if (orders.length === 0) {
+      return res.status(404).json({ message: "No orders found", status: 404 });
+    }
+
+    return res.status(200).json({ orders: orders, status: 200 });
+  } catch (err) {
+    console.error(err);
+    return res
+      .status(500)
+      .json({ message: "Something went wrong", status: 500 });
+  }
+};
+
 // Etherscan data fetch ------------------------------------------------------------------------
 
 const GET_TOKEN_PRICE = async (req, res) => {
@@ -92,4 +140,10 @@ const GET_TOKEN_PRICE = async (req, res) => {
   }
 };
 
-export { INSERT_ORDER, FIND_ORDER_BY_TRACKING_NUMBER, GET_TOKEN_PRICE };
+export {
+  INSERT_ORDER,
+  FIND_ORDER_BY_TRACKING_NUMBER,
+  UPDATE_ORDER_BY_ID,
+  GET_ALL_ORDERS,
+  GET_TOKEN_PRICE,
+};
