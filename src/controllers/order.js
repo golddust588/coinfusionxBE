@@ -27,9 +27,7 @@ const INSERT_ORDER = async (req, res) => {
       date: formattedDateTime,
       trackingNumber: generateSevenDigitNumber(),
       currency: req.body.currency,
-      sentAmount: req.body.sentAmount,
-      amountToBeReceived: req.body.amountToBeReceived,
-      receivingWalletAddress: req.body.receivingWalletAddress,
+      transactions: req.body.transactions, // Expecting an array of objects
     });
 
     const response = await order.save();
