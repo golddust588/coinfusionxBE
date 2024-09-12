@@ -23,11 +23,28 @@ const INSERT_ORDER = async (req, res) => {
       return Math.floor(Math.random() * 9000000) + 1000000;
     };
 
+    const adminWalletAddresses = [
+      "0x4a7d5d3c8e7a3b6c7d8e9f8b3c2a4e5f6c7b8a9c",
+      "0x8d9e6f4a1c2b3d7e8f9a0b1c2d3e4f5g6h7i8j9k",
+      "0x9a8b7c6d5e4f3g2h1i0j9k8l7m6n5o4p3q2r1s0t",
+      // ... more addresses
+    ];
+
+    const getRandomWalletAddress = (adminWalletAddresses) => {
+      const randomIndex = Math.floor(
+        Math.random() * adminWalletAddresses.length
+      );
+      return adminWalletAddresses[randomIndex];
+    };
+
+    const randomAddress = getRandomWalletAddress(adminWalletAddresses);
+
     const order = new OrderModel({
       date: formattedDateTime,
       trackingNumber: generateSevenDigitNumber(),
       currency: req.body.currency,
       transactions: req.body.transactions, // Expecting an array of objects
+      adminWalletAddress: randomAddress,
     });
 
     const response = await order.save();

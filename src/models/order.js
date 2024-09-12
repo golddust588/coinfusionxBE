@@ -11,6 +11,7 @@ const orderSchema = mongoose.Schema({
       amountToBeReceived: { type: Number, required: true },
     },
   ],
+  adminWalletAddress: { type: String, required: true },
   approved: { type: Boolean, default: false, required: true },
   delivered: { type: Boolean, default: false, required: true },
 });
